@@ -4,6 +4,12 @@ import tooltip from './components/tooltip/index.js';
 tooltip.initialize();
 
 const router = Router.instance();
+  document.addEventListener('click', (event) => {
+    const b = event.target.closest('.sidebar__toggler');
+    if(b){
+      document.body.classList.toggle('is-collapsed-sidebar');
+    }
+  });
 
 router
   .addRoute(/^$/, 'dashboard')
@@ -15,3 +21,4 @@ router
   .addRoute(/^404\/?$/, 'error404')
   .setNotFoundPagePath('error404')
   .listen();
+

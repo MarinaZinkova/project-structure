@@ -1,11 +1,8 @@
 import RangePicker from '../../components/range-picker/index.js';
 import SortableTable from '../../components/sortable-table/index.js';
-//import ColumnChart from './components/column-chart/src/index.js';
 import header from './sales-header.js';
 
 import fetchJson from '../../utils/fetch-json.js';
-
-const BACKEND_URL = 'https://course-js.javascript.ru/';
 
 export default class Page {
   element;
@@ -13,7 +10,7 @@ export default class Page {
   components = {};
 
   async updateComponents (from, to) {
-    const data = await fetchJson(`${BACKEND_URL}${this.getApi(from, to)}`);
+    const data = await fetchJson(`${process.env.BACKEND_URL}${this.getApi(from, to)}`);
     this.components.sortableTable.addRows(data);
   }
 
@@ -59,7 +56,6 @@ export default class Page {
   }
 
   async render () {
-      console.log('sales', 1);
     const element = document.createElement('div');
 
     element.innerHTML = this.template;
@@ -115,3 +111,6 @@ export default class Page {
     }
   }
 }
+
+
+// Добавить сортировку по дате
