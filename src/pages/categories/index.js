@@ -1,5 +1,5 @@
 import SortableList from '../../components/sortable-list/index.js';
-//import Tooltip from '../../components/tooltip/index.js';
+import NotificationMessage from '../../components/notification/index.js';
 
 import fetchJson from '../../utils/fetch-json.js';
 
@@ -11,6 +11,16 @@ export default class Page {
   async updateComponents () {
     const data = await fetchJson(`${process.env.BACKEND_URL}api/rest/categories?_sort=weight&_refs=subcategory`);
     return data;
+  }
+
+  async postCopmonent(data){
+    const result = await fetchJson(`${process.env.BACKEND_URL}api/rest/subcategories`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
   }
 
   initComponents () {
@@ -38,15 +48,16 @@ export default class Page {
   async render () {
     this.data = await this.updateComponents();
     const element = document.createElement('div');
-
     element.innerHTML = this.getTemplate();
-
     this.element = element.firstElementChild;
-    //this.subElements = this.getSubElements(this.element);
+    this.subElements = this.getSubElements(this.element);
 
     //this.initComponents();
 
     //this.renderComponents();
+    
+    this.getUpdateTable();
+
     this.initEventListeners();
 
     return this.element;
@@ -62,35 +73,51 @@ export default class Page {
   }
 
   getSubElements ($element) {
-    const elements = $element.querySelectorAll('[data-element]');
+    const elements = $element.querySelectorAll('[data-id]');
 
     return [...elements].reduce((accum, subElement) => {
-      accum[subElement.dataset.element] = subElement;
+      accum[subElement.dataset.id] = subElement;
 
       return accum;
     }, {});
   }
 
-  createList(subcategories) {
-    //const { imageListContainer } = this.subElements;
-    //const { images } = this.formData;
-
-    const items = subcategories.map((item) => this.getItem(item));
-
-  
+  createList(tab) {
+    const items = tab.subcategories.map((item) => this.getItem(item));
     const sortableList = new SortableList({
       items
     });
+    
+    const elem = document.createElement('div');
+    elem.className = "subcategory-list";
+    elem.append(sortableList.element);
 
-    const ul = document.createElement('div');
-    ul.append(sortableList.element);
+    const elem2 = document.createElement('div');
+    elem2.className = "category__body";
+    elem2.append(elem);
 
-  //console.error('2', ul.firstElementChild.outerHTML);
-
-    //imageListContainer.append(sortableList.element);
-    return ul.firstElementChild.outerHTML; //sortableList.element.outerHTML;
+    return elem2;
   }
 
+  getUpdateTable(){
+    let res = '';
+    for(let t of this.data){
+      this.subElements[t.id].append(this.createList(t));
+    }
+  }
+
+  getTable(){
+    let res = '';
+    for(const t of this.data){
+      res = res + `
+<div class="category category_open" data-id="${t.id}">
+    <header class="category__header">${t.title}</header>
+  </div>`;
+     }
+
+   return res;
+  }
+  
   getItem(obj) {    
     const wrapper = document.createElement('div');
 
@@ -101,24 +128,6 @@ export default class Page {
     </li>`;
 
     return wrapper.firstElementChild;
-  }
-
-  getTable(){
-    let res = '';
-    for(let t of this.data){
-      //console.error('1', t);
-      res = res + `
-<div class="category category_open" data-id="${t.id}">
-    <header class="category__header">${t.title}</header>
-    <div class="category__body">
-      <div class="subcategory-list">
-          ${this.createList(t.subcategories)}
-      </div>
-    </div>
-  </div>`;
-    }
-
-    return res;
   }
   
   getTemplate () {
@@ -131,14 +140,33 @@ export default class Page {
   }
 
   initEventListeners () {
-    // Слушаем событие в элементе rangePicker, и если происходит то обновляем
-    /*document.addEventListener('sortable-list-reorder', event => {
+    // Слушаем событие в элементе
+    document.addEventListener('sortable-list-reorder', event => {
       // Здесь нужно отправить запрос на сервер + вывести сообщение тултип
-      console.error('sortable-list-reorder');
-      //const { from, to } = event.detail;
 
-      //this.updateComponents(from, to);
-    });*/
+      //console.error('sortable-list-reorder', 1);
+      const mass = [];
+      for(let i = 0; i < 3; i++){
+        const id = event.target.children[i].dataset.id;
+        mass.push({ id, weight: i + 1});
+      }
+
+      this.postCopmonent(mass);
+
+      
+        const notification = new NotificationMessage('Category order saved_3214', {
+          duration: 2000
+        });
+    
+        notification.show(this.element);
+
+
+      /*const element = document.createElement('div');
+      element.innerHTML = `<div class="notification notification_success show">
+      <div class="notification__content">Category order saved</div>
+    </div>`;
+       document.body.append(element.firstElementChild);*/
+    });
 
     this.element.addEventListener('click', event => {
       if(event.target.tagName === 'HEADER'){
@@ -164,6 +192,6 @@ export default class Page {
   }
 }
 
-// Не работает компонент sortable-list. Нет отправки изменений на ПОСТ
+
 
 

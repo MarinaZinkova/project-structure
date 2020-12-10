@@ -165,7 +165,7 @@ export default class SortableTable {
 
   getTableRows(data) {
     return data.map(item => `
-      <div class="sortable-table__row">
+      <div class="sortable-table__row" data-id=${item.id}>
         ${this.getTableRow(item, data)}
       </div>`
     ).join('');
@@ -202,6 +202,11 @@ export default class SortableTable {
 
   initEventListeners() {
     this.subElements.header.addEventListener('pointerdown', this.onSortClick);
+    this.subElements.body.addEventListener('pointerdown', event =>{
+      const row = event.target.closest('.sortable-table__row');
+      const elemid = row.dataset.id;
+      document.location.href = '/products/' + elemid;
+    });
     document.addEventListener('scroll', this.onWindowScroll);
   }
 

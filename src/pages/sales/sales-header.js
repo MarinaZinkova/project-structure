@@ -14,12 +14,15 @@ const header = [
   {
     id: 'createdAt',
     title: 'Дата',
-    sortable: false,
-    sortType: 'date',
+    sortable: true,
+    sortType: 'custom',
     template: data => {
       const d = new Date(data);
       const monthA = 'января,февраля,марта,апреля,мая,июня,июля,августа,сентября,октября,ноября,декабря'.split(',');
       return `<div class="sortable-table__cell">${d.getDate()} ${monthA[d.getMonth()]} ${d.getFullYear()}</div>`;
+    },
+    customSorting: function(a, b){
+      return a['createdAt']> b['createdAt'] ? 1 : 0;
     }
   },
   {

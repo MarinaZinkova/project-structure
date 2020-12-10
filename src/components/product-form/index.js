@@ -342,6 +342,8 @@ export default class ProductForm {
   }
 
   remove() {
-    this.element.remove();
+    if(this.element){
+      this.element.remove();
+    }    
   }
 }
