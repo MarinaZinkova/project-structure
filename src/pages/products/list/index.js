@@ -146,6 +146,13 @@ export default class Page {
 
       this.updateComponents()
     });
+    
+//!!!
+    this.components.productsContainer.subElements.body.addEventListener('pointerdown', event =>{
+      const row = event.target.closest('.sortable-table__row');
+      const elemid = row.dataset.id;
+      document.location.href = '/products/' + elemid;
+    });
   }
 
   remove () {

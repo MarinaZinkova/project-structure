@@ -1,6 +1,7 @@
 import SortableList from '../sortable-list/index.js';
 import escapeHtml from '../../utils/escape-html.js';
 import fetchJson from '../../utils/fetch-json.js';
+import NotificationMessage from '../notification/index.js';
 
 export default class ProductForm {
   element;
@@ -15,11 +16,24 @@ export default class ProductForm {
     price: 100,
     discount: 0
   };
+  isNew = false;
 
   onSubmit = event => {
     event.preventDefault();
 
-    this.save();
+    if(this.isNew){
+      this.save('PUT');
+    }
+    else{
+      this.save('PATCH');
+    } 
+    
+    const notification = new NotificationMessage('Товар сохранен', {
+      duration: 2000,
+      type: ""
+    });
+//this.element
+    notification.show();
   };
 
   uploadImage = () => {
@@ -66,6 +80,9 @@ export default class ProductForm {
 
   constructor(productId) {
     this.productId = productId;
+    if(!productId){
+      this.isNew = true;
+    }
   }
 
   template() {
@@ -200,10 +217,10 @@ export default class ProductForm {
     </div>`;
   }
 
-  async save() {
+  async save(metod) {
     const product = this.getFormData();
     const result = await fetchJson(`${process.env.BACKEND_URL}api/rest/products`, {
-      method: 'PATCH',
+      method: metod,
       headers: {
         'Content-Type': 'application/json'
       },

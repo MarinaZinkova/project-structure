@@ -34,7 +34,12 @@ export default class Page {
     const searchString = new URL(window.location.href);
     const path = searchString.pathname;
     const productId = path.slice(path.lastIndexOf('/') + 1);
-    this.components.productFrom = new ProductForm(productId);
+    if(productId==="add"){
+      this.components.productFrom = new ProductForm();
+    }
+    else{
+      this.components.productFrom = new ProductForm(productId);
+    }
   }
 
   async renderComponents() {

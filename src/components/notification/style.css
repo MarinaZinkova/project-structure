@@ -8,6 +8,11 @@
   z-index: 1000;
 }
 
+.notification.show {
+  display: block;
+  animation: fadeIn 0.3s linear;
+}
+
 /* Success */
 .notification.success {
   background: #cdfccd;

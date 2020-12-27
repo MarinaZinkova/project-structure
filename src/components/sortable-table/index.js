@@ -202,11 +202,11 @@ export default class SortableTable {
 
   initEventListeners() {
     this.subElements.header.addEventListener('pointerdown', this.onSortClick);
-    this.subElements.body.addEventListener('pointerdown', event =>{
+    /*this.subElements.body.addEventListener('pointerdown', event =>{
       const row = event.target.closest('.sortable-table__row');
       const elemid = row.dataset.id;
       document.location.href = '/products/' + elemid;
-    });
+    });*/
     document.addEventListener('scroll', this.onWindowScroll);
   }
 

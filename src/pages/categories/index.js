@@ -154,11 +154,12 @@ export default class Page {
       this.postCopmonent(mass);
 
       
-        const notification = new NotificationMessage('Category order saved_3214', {
-          duration: 2000
+        const notification = new NotificationMessage('Category order saved', {
+          duration: 2000,
+          type: ""
         });
-    
-        notification.show(this.element);
+    //this.element
+        notification.show();
 
 
       /*const element = document.createElement('div');
